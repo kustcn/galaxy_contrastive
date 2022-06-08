@@ -1,0 +1,45 @@
+# Setup
+setup: simclr
+
+# Model
+backbone: resnet18
+
+features_dim: 128
+
+
+num_classes: 4
+
+# Loss
+criterion: simclr
+temperature: 0.1 
+
+# Hyperparameters
+epochs: 50
+optimizer: sgd
+optimizer_kwargs:
+   nesterov: False
+   weight_decay: 0.0001 
+   momentum: 0.9
+   lr: 0.01
+scheduler: cosine
+# cosine constant
+scheduler_kwargs:
+   lr_decay_rate: 0.01
+batch_size: 256
+num_workers: 6
+
+# Transformations
+augmentation:
+   random_apply:
+      p: 0.8
+   color_jitter:
+      brightness: 0.2
+      contrast: 0.5
+      saturation: 0.5
+      hue: 0.4
+   random_grayscale: 
+      p: 0.2
+   normalize:
+      mean: [0.0992, 0.0925, 0.0915] #decals[0.0992, 0.0925, 0.0915] # SDSS [0.0996, 0.0813, 0.0556]  #  # gz[0.0435, 0.0384, 0.0289] # 
+      std:  [0.1018, 0.0939, 0.0911] #decals[0.1018, 0.0939, 0.0911] # SDSS [0.1324, 0.1143, 0.0779]  # # gz[0.0877, 0.0729, 0.0650] #  
+
