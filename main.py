@@ -12,12 +12,12 @@ from common_utils.loss import Contrastive_Loss
 from common_utils.imagenet import GalaxyData
 from common_utils.utils import AugmentationDataset
 
-rootpath = '/mnt/storage-ssd/liyadi/Unsupervised-GalaxyClassification/configs/experiment.yml'
+config_file = './configs/experiment.yml'
 # Parser
 parser = argparse.ArgumentParser(description='SimCLR')
-parser.add_argument('--config_output',type=str,default='/mnt/storage-ssd/liyadi/Unsupervised-GalaxyClassification/output/',
+parser.add_argument('--config_output',type=str,default='./output/',
                     help='Config file for the environment')
-parser.add_argument('--config_exp',type=str,default=rootpath,
+parser.add_argument('--config_exp',type=str,default=config_file,
                     help='Config file for the experiment')
 
 def seed_everything(seed):

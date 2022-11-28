@@ -15,27 +15,18 @@ import os,time
 #from time import time
 import torch
 import numpy as np
-import torch.distributed as dist
-from utils.config import create_config
-from utils.common_config import get_criterion, get_model, get_train_dataset,\
-                                get_val_dataset, get_train_dataloader,\
-                                get_val_dataloader, get_train_transformations,\
-                                get_val_transformations, get_optimizer,\
-                                adjust_learning_rate,get_test_dataset
-from utils.memory import MemoryBank
-from utils.train_utils import simclr_train
-from utils.utils import fill_memory_bank
+from common_utils.config import create_config
+from common_utils.loss import Contrastive_Loss
+from common_utils.utils import build_model ,get_optimizer
 from termcolor import colored
-from torch.autograd import Variable
-from torch.utils.data import Dataset, DataLoader
-from torch.utils.data.distributed import DistributedSampler
 
-rootpath = '/mnt/storage-ssd/liyadi/Unsupervised-res_vit/configs/pretext/simclr_cifar10.yml'
+config_file = './configs/experiment.yml'
 # Parser
 parser = argparse.ArgumentParser(description='SimCLR')
-parser.add_argument('--config_env',type=str,default='/mnt/storage-ssd/liyadi/Unsupervised-res_vit/configs/env.yml',
-                    help='Config file for the environment')
-parser.add_argument('--config_exp',type=str,default=rootpath,
+parser.add_argument('--config_output',type=str,default='./output/',
+                    help='Config file for the output')
+
+parser.add_argument('--config_exp',type=str,default=config_file,
                     help='Config file for the experiment')
 
 #parser.add_argument("--local_rank", default=os.getenv('LOCAL_RANK', -1), type=int)
@@ -53,19 +44,21 @@ def seed_everything(seed):
 
 seed_everything(678)
 args = parser.parse_args()
-p = create_config(args.config_env, args.config_exp)
+p = create_config(args.config_output, args.config_exp)
 print(colored(p, 'red'))
 
 
 # Model
 print(colored('Retrieve model', 'blue'))
-model = get_model(p)
+model = build_model(p)
 print('Model is {}'.format(model.__class__.__name__))
 print('Model parameters: {:.2f}M'.format(sum(p.numel() for p in model.parameters()) / 1e6))
 print(model)
 # Criterion
 print(colored('Retrieve criterion', 'blue'))
-criterion = get_criterion(p)
+
+criterion = Contrastive_Loss(p['temperature'])
+
 print('Criterion is {}'.format(criterion.__class__.__name__))
 
 
